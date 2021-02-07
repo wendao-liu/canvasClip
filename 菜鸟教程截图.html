@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head> 
+<meta charset="utf-8"> 
+<title>菜鸟教程(runoob.com)</title> 
+</head>
+<body>
+
+<p id='btn'>Image to use:</p>
+<p id='down'>下载</p>
+
+<video id="scream" src="movie.ogg" controls="controls">
+	您的浏览器不支持 video 标签。
+</video>
+<canvas id="myCanvas" width="250" height="300" style="border:1px solid #d3d3d3;">
+您的浏览器不支持 HTML5 canvas 标签。</canvas>
+
+<script>
+
+var c=document.getElementById("myCanvas");
+var ctx=c.getContext("2d");
+var img=document.getElementById("scream");
+
+img.onload = function() {
+} 
+btn.onclick =()=> {
+	ctx.drawImage(img,5,5);
+	console.log(c.toDataURL("image/png"))
+}
+down.onclick = () => {
+	var oA = document.createElement("a");
+    oA.download = 'test下载';// 设置下载的文件名，默认是'下载'
+    oA.href = c.toDataURL("image/png");
+    document.body.appendChild(oA);
+    oA.click();
+    oA.remove(); // 下载之后把创建的元素删除
+}
+</script>
+
+</body>
+</html>

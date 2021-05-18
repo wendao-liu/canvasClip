@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head> 
+  <meta charset="utf-8"> 
+  <title>菜鸟教程(runoob.com)</title> 
+</head>
+
+<body>
+
+  <div id="canvasView" style="border:1px solid red;position: relative;width: 500px; height: 500px; overflow: hidden;">
+    <canvas id="myCanvas" style="border:1px solid #d3d3d3;position: absolute;">
+      您的浏览器不支持 HTML5 canvas 标签。</canvas>
+  </div>
+
+
+  <script>
+    const data = {
+      "code": 200,
+      "data": {
+        "angle": 0,
+        "height": 1128,
+        "width": 912,
+        "prism_wordsInfo": [{
+          "charInfo": [{
+            "h": 15,
+            "prob": 99,
+            "w": 8,
+            "word": "1",
+            "x": 386,
+            "y": 117
+          }, ],
+          "direction": 0,
+          "pos": [{
+              "x": 385,
+              "y": 117
+            },
+            {
+              "x": 539,
+              "y": 117
+            },
+            {
+              "x": 539,
+              "y": 135
+            },
+            {
+              "x": 385,
+              "y": 135
+            }
+          ],
+          "prob": 99,
+          "word": "1"
+        }],
+        "orgHeight": 1128,
+        "orgWidth": 912,
+        "content": "2"
+      }
+    }
+
+    var canvas = document.getElementById("myCanvas");
+    var canvasView = document.getElementById("canvasView");
+
+    canvas.addEventListener("mousewheel", canvasScroll, false);
+
+
+    const {
+      height,
+      width,
+      prism_wordsInfo
+    } = data.data;
+
+    var ctx = canvas.getContext("2d");
+
+    canvas.height = height;
+    canvas.width = width;
+
+
+    initCanvas(ctx, prism_wordsInfo, canvasView.clientHeight / canvas.height, canvasView.clientWidth / canvas.width,
+      canvas);
+
+    // 初始化画布
+    function initCanvas(ctx, data, scaleRatioWidth, scaleRatioHeight, dom) {
+      if (scaleRatioWidth > 1 && scaleRatioHeight > 1) {
+        dom.width = scaleRatioWidth * width;
+        dom.height = scaleRatioHeight * height;
+      } else {
+        dom.height = height;
+      }
+
+      ctx.scale(scaleRatioWidth, scaleRatioHeight);
+      data.forEach((item) => {
+        const {
+          charInfo,
+          pos,
+          word
+        } = item;
+        const {
+          x,
+          y
+        } = pos[0];
+        const {
+          h
+        } = charInfo;
+        ctx.font = `${h}px Arial`;
+        ctx.fillText(word, x, y);
+      })
+    }
+
+    let stemp = 10 // 步进
+    // 计算尺寸的函数
+    let roll = function (e) {
+      if (e.wheelDelta) { //判断浏览器IE，谷歌滑轮事件
+        if (e.wheelDelta > 0) { //当滑轮向上滚动时
+          stemp--;
+          return stemp;
+        }
+        if (e.wheelDelta < 0) { //当滑轮向下滚动时
+          stemp++
+          return stemp
+        }
+      } else if (e.detail) { //Firefox滑轮事件
+        if (e.detail > 0) { //当滑轮向上滚动时
+          stemp--
+          return stemp
+        }
+        if (e.detail < 0) { //当滑轮向下滚动时
+          stemp++
+          return stemp
+        }
+      }
+    };
+
+    // canvas滚动事件
+    function canvasScroll(e) {
+      const size = roll(e);
+      if (size < 2) {
+        stemp = 2;
+        size = 2;
+      } else if (size > 20) {
+        stemp = 20;
+        size = 20;
+      }
+      initCanvas(ctx, prism_wordsInfo, size / 10, size / 10, canvas);
+    };
+
+
+    //获取元素
+    var x = 0;
+    var y = 0;
+    var l = 0;
+    var t = 0;
+    var isDown = false;
+    //鼠标按下事件
+    canvas.onmousedown = function (e) {
+      //获取x坐标和y坐标
+      x = e.clientX;
+      y = e.clientY;
+
+      //获取左部和顶部的偏移量
+      l = canvas.offsetLeft;
+      t = canvas.offsetTop;
+      //开关打开
+      isDown = true;
+      //设置样式  
+      canvas.style.cursor = 'move';
+    }
+    //鼠标移动
+    canvas.onmousemove = function (e) {
+      if (isDown == false) {
+        return;
+      }
+      //获取x和y
+      var nx = e.clientX;
+      var ny = e.clientY;
+      //计算移动后的左偏移量和顶部的偏移量
+      var nl = nx - (x - l);
+      var nt = ny - (y - t);
+
+      canvas.style.left = nl + 'px';
+      canvas.style.top = nt + 'px';
+    }
+    //鼠标抬起事件
+    window.onmouseup = function () {
+      //开关关闭
+      isDown = false;
+      canvas.style.cursor = 'default';
+    }
+  </script>
+
+</body>
+
+</html>
